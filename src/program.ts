@@ -1,4 +1,4 @@
-import * as EF from "@effect/io/Effect";
+import * as T from "@effect/io/Effect";
 
 export type Command = "F" | "B" | "L" | "R";
 export type Direction = "N" | "E" | "W" | "S";
@@ -13,9 +13,9 @@ export interface RoverState {
   direction: Direction;
 }
 
-export const program = EF.sync(() => console.log("hello"));
+export const program = T.sync(() => console.log("hello"));
 
-export function processCommand(state: RoverState, planet: Planet, command: Command): RoverState {
+export function processCommand(state: RoverState, planet: Planet, command: Command) {
   switch (command) {
     case "F":
       return checkForCrashes({ direction: "N", position: { ...state.position, x: state.position.x + 1 } }, planet);
@@ -29,7 +29,7 @@ export function processCommand(state: RoverState, planet: Planet, command: Comma
 }
 
 export function processCommands(state: RoverState, planet: Planet, commands: Command[]) {
-  return commands.reduce((acc, command) => processCommand(acc, planet, command), state);
+  return commands.reduce((acc, command) => T.runSync(processCommand(acc, planet, command)), state);
 }
 
 export function checkForCrashes(state: RoverState, planet: Planet) {
@@ -37,8 +37,8 @@ export function checkForCrashes(state: RoverState, planet: Planet) {
   const crashed = planet.obstacles.some(({ x, y }) => a === x && b === y);
 
   if (crashed) {
-    throw new Error("Crashed");
+    return T.fail(new Error("Crashed"));
   }
 
-  return state;
-}
+  return T.succeed(state);
+};

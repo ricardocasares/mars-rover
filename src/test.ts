@@ -51,6 +51,6 @@ test("crashes when hitting an obstacle", () =>
   assert
     .throws(
       () => processCommands(rover, planet, ["F", "F", "F", "F", "R", "R"]),
-      Error("Crashed")
+      new Error('Crashed')
     )
 );
