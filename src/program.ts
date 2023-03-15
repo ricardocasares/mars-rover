@@ -37,7 +37,7 @@ export function checkForCrashes(state: RoverState, planet: Planet) {
   const crashed = planet.obstacles.some(({ x, y }) => a === x && b === y);
 
   if (crashed) {
-    return T.fail(new Error("Crashed"));
+    return T.fail(new Error(`Crashed at position [${a}, ${b}]`));
   }
 
   return T.succeed(state);
